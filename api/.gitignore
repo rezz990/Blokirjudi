@@ -1,4 +1,4 @@
-supabase/.env*
-!supabase/.env.example
-supabase/.branches
-supabase/.temp
+.env
+.env.local
+.vercel
+node_modules

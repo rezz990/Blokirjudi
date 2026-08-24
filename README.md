@@ -25,17 +25,14 @@ Ketiga module bisa dikembangkan terpisah. Kalau mau mencoba alur penuh, urutan p
 
 ### 1. API blacklist
 
-Butuh Docker dan Supabase CLI. Perintah singkatnya:
+API sekarang ditujukan untuk **Vercel Functions + Supabase cloud**, jadi tidak membutuhkan Docker. Alur paling singkatnya:
 
-```bash
-cd api
-supabase start
-supabase db reset
-cp supabase/.env.example supabase/.env.local
-supabase functions serve blacklist --env-file supabase/.env.local
-```
+1. Jalankan migration lewat Supabase SQL Editor.
+2. Import repository ke Vercel dengan Root Directory `api`.
+3. Isi `SUPABASE_URL` dan `SUPABASE_SERVICE_ROLE_KEY`.
+4. Deploy, lalu gunakan endpoint `/v1/blacklist`.
 
-Nilai URL dan key lokal harus diambil dari `supabase status`, bukan dibiarkan berupa placeholder. Panduan database, data uji, moderasi, deployment, dan troubleshooting ada di **[`api/README.md`](api/README.md)**.
+Panduan klik-per-klik, local development tanpa Docker, custom domain, moderasi data, dan troubleshooting ada di **[`api/README.md`](api/README.md)**.
 
 ### 2. Browser extension
 

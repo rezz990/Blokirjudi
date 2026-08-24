@@ -1,131 +1,184 @@
-# API BlokirJudi
+# API BlokirJudi — Supabase + Vercel
 
-API ini memakai **Supabase Postgres + Edge Function (Deno)**. Database menyimpan antrean moderasi, sedangkan endpoint publik cuma mengembalikan domain dengan status `verified`.
+API ini sengaja dibuat supaya deployment-nya simpel: **database di Supabase, function di Vercel, tanpa Docker dan tanpa server yang perlu dirawat**. Kamu cukup menjalankan SQL sekali, import repository ke Vercel, isi environment variables, lalu deploy.
 
-## Yang perlu disiapkan
+Endpoint yang tersedia:
 
-- [Docker](https://docs.docker.com/get-docker/) aktif.
-- [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started) versi terbaru.
-- `curl` atau REST client untuk mengetes endpoint.
-- Project Supabase hanya diperlukan saat mau deploy; development lokal nggak butuh akun cloud.
+| Endpoint | Fungsi |
+| --- | --- |
+| `GET /v1/blacklist` | Daftar domain berstatus `verified`. |
+| `GET /health` | Mengecek apakah environment wajib sudah terpasang. |
 
-Cek instalasi dulu:
+## Arsitektur singkat
+
+```text
+Extension → Vercel Function → Supabase REST API → blacklist_domains
+```
+
+Service-role key hanya tersimpan sebagai encrypted environment variable di Vercel. Key tersebut tidak pernah dikirim ke extension atau landing page.
+
+## Cara paling simpel: deploy langsung ke Vercel
+
+### 1. Buat project Supabase
+
+1. Masuk ke [Supabase Dashboard](https://supabase.com/dashboard) dan klik **New project**.
+2. Tunggu database selesai dibuat.
+3. Buka **SQL Editor** → **New query**.
+4. Salin seluruh isi [`supabase/migrations/20260824000000_create_blacklist.sql`](supabase/migrations/20260824000000_create_blacklist.sql), lalu klik **Run**.
+5. Pastikan tabel `blacklist_domains` muncul di **Table Editor**.
+
+Kamu tidak perlu menginstal Supabase CLI atau Docker untuk alur ini.
+
+### 2. Ambil credential Supabase
+
+Di Supabase Dashboard, buka **Project Settings → Data API / API** dan catat:
+
+- **Project URL**, bentuknya `https://PROJECT_REF.supabase.co`.
+- **service_role key** pada bagian API keys.
+
+> `service_role` adalah secret dengan akses tinggi. Masukkan hanya ke Vercel Environment Variables. Jangan tempel di issue, landing, extension, atau variable bernama `PUBLIC_*`.
+
+### 3. Import ke Vercel
+
+1. Push repository ini ke GitHub/GitLab/Bitbucket.
+2. Buka [Vercel New Project](https://vercel.com/new), lalu pilih repository BlokirJudi.
+3. Pada **Root Directory**, pilih `api`.
+4. Framework preset boleh dibiarkan **Other**.
+5. Build command dan output directory biarkan kosong; Vercel otomatis menemukan folder `api/` serverless.
+6. Tambahkan environment variables berikut:
+
+| Name | Value |
+| --- | --- |
+| `SUPABASE_URL` | `https://PROJECT_REF.supabase.co` |
+| `SUPABASE_SERVICE_ROLE_KEY` | service-role key dari Supabase |
+| `BLACKLIST_ALLOWED_ORIGIN` | `*` |
+| `BLACKLIST_MAX_DOMAINS` | `20000` |
+| `BLACKLIST_CACHE_CONTROL` | `public, max-age=300, s-maxage=3600, stale-while-revalidate=86400` |
+
+7. Pilih environment **Production**, **Preview**, dan **Development** bila semuanya memakai database yang sama. Untuk project serius, sebaiknya Preview memakai project Supabase terpisah.
+8. Klik **Deploy**.
+
+### 4. Tes deployment
+
+Ganti `DOMAIN-VERCEL` dengan URL hasil deployment:
 
 ```bash
-docker --version
-supabase --version
-docker info >/dev/null && echo "Docker siap"
+curl --fail https://DOMAIN-VERCEL.vercel.app/health
+curl --fail https://DOMAIN-VERCEL.vercel.app/v1/blacklist
 ```
 
-## Menjalankan API lokal dari nol
-
-Semua perintah di bagian ini dijalankan dari folder `api/`.
-
-```bash
-cd api
-
-# 1. Nyalakan Postgres, Studio, dan runtime Supabase lokal.
-supabase start
-
-# 2. Terapkan ulang seluruh migration ke database lokal.
-supabase db reset
-
-# 3. Siapkan konfigurasi fungsi yang tidak masuk Git.
-cp supabase/.env.example supabase/.env.local
-```
-
-Buka `supabase/.env.local`. Untuk local stack, ambil URL dan service-role key dari:
-
-```bash
-supabase status
-```
-
-Isi minimalnya seperti ini menggunakan nilai **API URL** dan **service_role key** dari output tersebut:
-
-```dotenv
-SUPABASE_URL=http://127.0.0.1:54321
-SUPABASE_SERVICE_ROLE_KEY=service-role-key-dari-supabase-status
-BLACKLIST_ALLOWED_ORIGIN=*
-BLACKLIST_MAX_DOMAINS=20000
-```
-
-Lalu jalankan Edge Function di terminal yang tetap terbuka:
-
-```bash
-supabase functions serve blacklist --env-file supabase/.env.local
-```
-
-Tes dari terminal lain:
-
-```bash
-curl --fail --verbose \
-  http://127.0.0.1:54321/functions/v1/blacklist
-```
-
-Respons kosong yang sehat akan terlihat seperti ini:
+Hasil awal yang normal:
 
 ```json
 {"version":"2026-08-24","count":0,"domains":[]}
 ```
 
-## Menambahkan data untuk pengujian
+Kalau `/health` mengembalikan status `503`, cek lagi nama environment variable di Vercel lalu lakukan **Redeploy**. Perubahan env tidak diterapkan ke deployment lama secara otomatis.
 
-1. Buka Supabase Studio lokal di `http://127.0.0.1:54323`.
-2. Masuk ke **SQL Editor**.
-3. Jalankan data contoh berikut. Gunakan domain `.test` supaya tidak menuduh situs sungguhan.
+## Hubungkan ke extension
 
-```sql
-insert into public.blacklist_domains (domain, status, source, notes)
-values ('contoh-judi.test', 'verified', 'local-development', 'Data uji lokal');
+Ada dua pilihan:
+
+1. Buka **Pengaturan** extension dan isi `https://DOMAIN-VERCEL.vercel.app/v1/blacklist`.
+2. Untuk nilai bawaan rilis, ubah `DEFAULTS.endpoint` di [`../extension/src/config.js`](../extension/src/config.js).
+
+Kalau sudah punya custom domain seperti `api.blokirjudi.id`, tambahkan melalui **Vercel Project → Settings → Domains**, lalu gunakan:
+
+```text
+https://api.blokirjudi.id/v1/blacklist
 ```
 
-Panggil endpoint lagi dan pastikan `contoh-judi.test` muncul. Untuk menguji moderasi, ubah status menjadi `pending`; domain itu seharusnya langsung hilang dari respons API.
+## Menambah dan memoderasi domain
 
-## Environment variables
+Buka **Supabase → Table Editor → blacklist_domains → Insert row**:
 
-| Variable | Wajib | Fungsi |
-| --- | --- | --- |
-| `SUPABASE_URL` | Ya | URL project/local API Supabase. |
-| `SUPABASE_SERVICE_ROLE_KEY` | Ya | Membaca tabel yang dilindungi RLS; **jangan pernah masuk frontend**. |
-| `BLACKLIST_ALLOWED_ORIGIN` | Tidak | Origin CORS. Default `*` cocok untuk extension lintas browser. |
-| `BLACKLIST_CACHE_CONTROL` | Tidak | Kebijakan cache CDN/browser untuk respons blacklist. |
-| `BLACKLIST_MAX_DOMAINS` | Tidak | Jumlah hasil, otomatis dibatasi maksimal 20.000. |
+| Field | Contoh |
+| --- | --- |
+| `domain` | `contoh-judi.test` |
+| `status` | `pending` |
+| `source` | URL/sumber laporan yang bisa diaudit |
+| `notes` | Catatan moderator, tanpa data pribadi |
 
-Template lengkapnya ada di [`supabase/.env.example`](supabase/.env.example). File `.env.local` sudah diabaikan Git.
+Alur yang disarankan:
 
-## Deploy ke Supabase
+1. Laporan baru masuk sebagai `pending`.
+2. Moderator mengecek sumber dan memastikan bukan false positive.
+3. Ubah menjadi `verified` agar diterbitkan API, atau `rejected` bila tidak valid.
+4. Endpoint hanya mengambil `verified`; `pending` dan `rejected` tidak pernah dikirim.
+
+Gunakan domain `.test` untuk percobaan. Jangan menuduh domain sungguhan tanpa bukti dan review manusia.
+
+## Menjalankan lokal tanpa Docker
+
+Local development hanya membutuhkan Node.js 20+:
 
 ```bash
 cd api
-supabase login
-supabase link --project-ref PROJECT_REF
-supabase db push
-supabase secrets set BLACKLIST_ALLOWED_ORIGIN='*' BLACKLIST_MAX_DOMAINS='20000'
-supabase functions deploy blacklist --no-verify-jwt
+cp .env.example .env.local
+# isi SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY dari project Supabase milikmu
+npm run dev
 ```
 
-Pada hosted Edge Function, `SUPABASE_URL` dan `SUPABASE_SERVICE_ROLE_KEY` sudah diinjeksi otomatis oleh Supabase. Jangan mencoba mengunggah ulang dua built-in secret itu dari `.env.local`; perintah `secrets set` di atas hanya untuk konfigurasi tambahan.
-
-Tes URL bawaan setelah deploy:
+Vercel CLI akan menampilkan URL lokal, biasanya `http://localhost:3000`. Tes dengan:
 
 ```bash
-curl --fail https://PROJECT_REF.supabase.co/functions/v1/blacklist
+curl --fail http://localhost:3000/health
+curl --fail http://localhost:3000/v1/blacklist
 ```
 
-Extension saat ini memakai URL cantik `https://api.blokirjudi.id/v1/blacklist`. Arahkan custom domain/reverse proxy ke function Supabase, atau ganti endpoint lewat pengaturan extension. Pastikan proxy meneruskan `ETag`, `If-None-Match`, `Cache-Control`, dan request `OPTIONS`.
+Perintah ini memakai database Supabase cloud. Hindari memasukkan data uji ke project production; gunakan project development terpisah kalau memungkinkan.
 
-## Moderasi dan keamanan
+## Environment variables
 
-- Laporan baru wajib masuk sebagai `pending`, bukan langsung `verified`.
-- Simpan sumber yang bisa diaudit dan cek false positive secara manual.
-- Jangan masukkan path lengkap, query string, IP pengguna, atau data pribadi—database hanya butuh hostname.
-- Jangan pernah memakai service-role key di landing maupun extension.
-- Tabel sengaja menolak akses `anon` dan `authenticated`; Edge Function adalah pintu baca publiknya.
+Salin dari [`.env.example`](.env.example):
+
+| Variable | Wajib | Keterangan |
+| --- | --- | --- |
+| `SUPABASE_URL` | Ya | Project URL Supabase, bukan URL Table Editor. |
+| `SUPABASE_SERVICE_ROLE_KEY` | Ya | Secret server-only untuk melewati RLS. |
+| `BLACKLIST_ALLOWED_ORIGIN` | Tidak | Default `*`, cocok untuk extension lintas browser. |
+| `BLACKLIST_CACHE_CONTROL` | Tidak | Aturan cache browser dan Vercel CDN. |
+| `BLACKLIST_MAX_DOMAINS` | Tidak | Default dan batas maksimum 20.000. |
+
+Jangan commit `.env.local`; file tersebut sudah masuk `.gitignore`.
+
+## Struktur folder
+
+```text
+api/
+├── api/
+│   ├── _lib/config.js       # validasi env + header bersama
+│   ├── health.js            # health check tanpa membocorkan secret
+│   └── v1/blacklist.js      # Vercel Function utama
+├── supabase/migrations/     # SQL yang dijalankan lewat Supabase SQL Editor
+├── .env.example
+├── package.json
+└── vercel.json              # rewrite URL dan security headers
+```
+
+## Update deployment
+
+Setelah commit baru masuk ke branch yang terhubung, Vercel otomatis membuat deployment. Untuk deploy manual dari komputer:
+
+```bash
+cd api
+npx vercel          # preview
+npx vercel --prod   # production
+```
 
 ## Troubleshooting
 
-- **`Docker is not running`** — nyalakan Docker, lalu ulangi `supabase start`.
-- **Respons `500`** — cek terminal function dan pastikan dua variable Supabase tidak masih berupa placeholder.
-- **Domain tidak muncul** — pastikan statusnya tepat `verified` dan domain menggunakan huruf kecil.
-- **CORS diblokir browser** — untuk development, gunakan `BLACKLIST_ALLOWED_ORIGIN=*`, lalu restart function.
-- **Reset total local stack** — jalankan `supabase stop --no-backup`, kemudian `supabase start && supabase db reset`.
+- **`/health` status 503** — `SUPABASE_URL` atau `SUPABASE_SERVICE_ROLE_KEY` belum ada; tambahkan di Vercel lalu Redeploy.
+- **Blacklist status 502** — cek Vercel Function Logs; biasanya URL/key Supabase salah atau tabel belum dibuat.
+- **Respons kosong padahal ada data** — pastikan nilai `status` tepat `verified`.
+- **CORS error** — gunakan `BLACKLIST_ALLOWED_ORIGIN=*` untuk extension lintas browser.
+- **`FUNCTION_INVOCATION_FAILED`** — pastikan Vercel Root Directory adalah `api` dan Node.js minimal versi 20.
+- **Env sudah diganti tetapi belum berubah** — Vercel mengikat env saat build/deploy; lakukan Redeploy.
+
+## Catatan keamanan
+
+- Endpoint tidak menerima write request; hanya `GET` dan `OPTIONS`.
+- Query hanya memilih kolom `domain`, bukan sumber/catatan moderator.
+- Batas respons dijepit maksimal 20.000 domain walaupun env diisi lebih besar.
+- Error publik dibuat generik; detail upstream hanya masuk Vercel logs.
+- Rotasi service-role key segera jika pernah bocor.
