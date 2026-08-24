@@ -1,43 +1,104 @@
-# Astro Starter Kit: Minimal
+# Landing BlokirJudi
 
-```sh
-npm create astro@latest -- --template minimal
+Landing memakai **Astro**, tanpa framework UI dan tanpa analytics. Hasil produksinya static HTML/CSS/JavaScript, jadi bisa dipasang di hampir semua static hosting.
+
+## Yang perlu disiapkan
+
+- Node.js `>=22.12.0` (sesuai `package.json`).
+- npm yang ikut bersama Node.js.
+
+Cek versi:
+
+```bash
+node --version
+npm --version
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Kalau Node terlalu lama, pakai version manager seperti `nvm`, `fnm`, atau `mise` sebelum lanjut.
 
-## 🚀 Project Structure
+## Menjalankan dari nol
 
-Inside of your Astro project, you'll see the following folders and files:
+Semua perintah dijalankan dari folder `landing/`:
+
+```bash
+cd landing
+npm install
+cp .env.example .env
+npm run dev
+```
+
+Dev server tersedia di `http://localhost:4321`. Sesuai setup repository ini, server juga bisa dijalankan sebagai background process:
+
+```bash
+npx astro dev --background
+npx astro dev status
+npx astro dev logs
+npx astro dev stop
+```
+
+## Mengatur URL dan tombol
+
+Edit `.env` lokal—jangan edit `.env.example` dengan URL rahasia/pribadi.
+
+| Variable | Dipakai untuk |
+| --- | --- |
+| `PUBLIC_SITE_URL` | URL canonical deployment (disiapkan untuk konfigurasi hosting/SEO). |
+| `PUBLIC_GITHUB_URL` | Tombol menuju source dan kontribusi. |
+| `PUBLIC_EXTENSION_DOWNLOAD_URL` | CTA utama **Pasang di browser**. |
+| `PUBLIC_CHROME_STORE_URL` | URL store Chrome untuk integrasi tombol store berikutnya. |
+| `PUBLIC_FIREFOX_ADDON_URL` | URL Firefox Add-ons. |
+| `PUBLIC_EDGE_STORE_URL` | URL Microsoft Edge Add-ons. |
+| `PUBLIC_DONATION_URL` | Tombol donasi; kosong berarti tombol tetap nonaktif. |
+
+Semua variable berawalan `PUBLIC_` masuk ke output browser. **Jangan pernah isi token, password, atau Supabase service-role key di sini.** Restart dev server setelah mengubah `.env`.
+
+## Build dan preview produksi
+
+```bash
+npm run build
+npm run preview
+```
+
+- Output production ada di `landing/dist/` dan tidak di-commit.
+- Buka URL preview yang dicetak terminal dan cek desktop serta mobile.
+- Jalankan build sekali lagi sebelum PR untuk menangkap error template/env.
+
+## Deploy
+
+### Netlify/Vercel/Cloudflare Pages
+
+Gunakan konfigurasi umum berikut:
 
 ```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+Root directory: landing
+Build command: npm run build
+Output directory: dist
+Node version: 22
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+Salin variable dari `.env.example` ke dashboard environment hosting. Jangan mengunggah file `.env`.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+### Static hosting biasa
 
-Any static assets, like images, can be placed in the `public/` directory.
+```bash
+npm ci
+npm run build
+```
 
-## 🧞 Commands
+Upload **isi** folder `dist/` ke document root hosting. Pastikan HTTPS aktif.
 
-All commands are run from the root of the project, from a terminal:
+## Checklist sebelum rilis
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+- Ganti semua `USERNAME`, `EXTENSION_ID`, dan `ADDON_SLUG` di environment production.
+- Pastikan CTA download tidak lagi menuju placeholder.
+- Isi `PUBLIC_DONATION_URL` hanya setelah kanal QRIS/GoPay/Bank Jago resmi siap.
+- Uji navigasi keyboard, tampilan mobile, dan mode reduced motion.
+- Pastikan tidak ada analytics/tracker baru tanpa diskusi komunitas.
 
-## 👀 Want to learn more?
+## Troubleshooting
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- **`npm install` gagal karena versi engine** — gunakan Node `>=22.12.0`.
+- **Perubahan `.env` tidak muncul** — stop lalu jalankan ulang dev server.
+- **Tombol donasi tetap mati** — pastikan `PUBLIC_DONATION_URL` tidak kosong dan restart server.
+- **Port 4321 terpakai** — jalankan `npm run dev -- --port 4322`.
+- **Build lama/aneh** — hapus cache dengan `rm -rf .astro dist`, lalu `npm run build`.

@@ -1,17 +1,38 @@
 ---
-
+const features = [
+  ["⚡", "Ngebut, bukan ribet", "Pemblokiran terjadi langsung di browser. Nggak ada halaman yang diam-diam dibaca."],
+  ["🔒", "Privasi itu default", "Riwayat browsing tetap di perangkatmu. Kami cuma mengirim daftar blokir."],
+  ["🌱", "Dibangun bareng", "Kode terbuka dan kontribusi sekecil apa pun selalu punya tempat."],
+];
+const githubUrl = import.meta.env.PUBLIC_GITHUB_URL ?? "https://github.com/";
+const downloadUrl = import.meta.env.PUBLIC_EXTENSION_DOWNLOAD_URL ?? githubUrl;
+const donationUrl = import.meta.env.PUBLIC_DONATION_URL ?? "";
 ---
-
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<!doctype html>
+<html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="description" content="Extension gratis, ringan, dan privacy-first untuk membantu memblokir situs judi online."><link rel="icon" href="/favicon.svg"><meta name="theme-color" content="#07110e"><title>BlokirJudi — Internetan lebih tenang</title></head>
+<body>
+<header><a class="logo" href="#atas"><span>B.</span> BlokirJudi</a><nav><a href="#cara">Cara kerja</a><a href="#terbuka">Open source</a><a href="#dukung">Dukung</a></nav><a class="pill mini" href="#unduh">Pasang gratis ↗</a></header>
+<main id="atas">
+<section class="hero"><div class="copy"><div class="eyebrow"><i></i> 100% GRATIS &amp; OPEN SOURCE</div><h1>Jaga langkahmu<br>di <em>internet.</em></h1><p class="lead">Satu extension kecil buat bantu kamu menjauh dari situs judi online. Ringan, nggak menghakimi, dan nggak kepo sama riwayat browsingmu.</p><div class="actions" id="unduh"><a class="pill" href={downloadUrl} rel="noreferrer">Pasang di browser ↗</a><a href="#cara">◉ &nbsp; Lihat cara kerjanya</a></div><p class="compat">Segera hadir untuk <b>Chrome · Firefox · Edge · Brave</b></p></div>
+<aside class="browser-card" aria-label="Pratinjau extension"><div class="browser-top"><span></span><span></span><span></span><div>blokirjudi.id</div></div><div class="preview"><div class="shield">✓</div><small>PROTEKSI AKTIF</small><strong>12.482</strong><p>situs dijaga hari ini</p><div class="meter"><i></i></div><div class="privacy">🔒 <div><b>Data kamu tetap milikmu</b><small>Tanpa tracker &amp; riwayat browsing</small></div></div></div></aside></section>
+<section class="stats"><div><strong>20K</strong><span>kapasitas domain</span></div><div><strong>0</strong><span>tracker ditanam</span></div><div><strong>24j</strong><span>update otomatis</span></div></section>
+<section class="section" id="cara"><div class="section-head"><div><span class="kicker">KENAPA BLOKIRJUDI?</span><h2>Tenang tanpa<br>banyak drama.</h2></div><p>Kami percaya teknologi yang baik itu terasa membantu tanpa ikut campur. Makanya semuanya dibuat sesederhana dan seterbuka mungkin.</p></div><div class="grid">{features.map(([icon,title,copy],i) => <article class:list={["feature",i===1&&"featured"]}><span class="feature-icon">{icon}</span><h3>{title}</h3><p>{copy}</p><b>0{i+1}</b></article>)}</div></section>
+<section class="open" id="terbuka"><div><span class="kicker">PUNYA KITA BARENG</span><h2>Transparan sampai baris kode terakhir.</h2><p>Blacklist, extension, API, sampai landing page ini terbuka untuk dilihat dan diperbaiki. Menemukan bug atau punya ide? Yuk, ikut nimbrung.</p><a class="pill dark" href={githubUrl} rel="noreferrer">Lihat di GitHub ↗</a></div><pre><code><span>// nggak ada yang disembunyikan</span>
+{
+  <b>"tracking"</b>: false,
+  <b>"selling_data"</b>: false,
+  <b>"community_powered"</b>: true
+}</code></pre></section>
+<section class="donate" id="dukung"><span>☕</span><div><span class="kicker">TRAKTIR KOPI</span><h2>Bantu project ini tetap jalan.</h2><p>Kalau BlokirJudi terasa berguna, dukungan lewat QRIS, GoPay, atau Bank Jago bakal berarti banget.</p></div>{donationUrl ? <a class="pill" href={donationUrl} rel="noreferrer">Dukung sekarang ↗</a> : <button class="pill" disabled>Donasi segera dibuka</button>}</section>
+</main><footer><a class="logo" href="#atas"><span>B.</span> BlokirJudi</a><p>Dibuat dengan niat baik untuk internet yang lebih sehat. 🌱</p><p>© 2026 · Open source</p></footer>
+<script>const o=new IntersectionObserver(xs=>xs.forEach(x=>x.isIntersecting&&x.target.classList.add('show')),{threshold:.1});document.querySelectorAll('.section,.open,.donate,.stats').forEach(x=>o.observe(x));</script>
+</body></html>
+<style is:global>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=Manrope:wght@700;800&display=swap');
+:root{--ink:#07110e;--muted:#64736b;--lime:#baff48;--paper:#f8faf6;--line:#dfe7df;font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--paper);scroll-behavior:smooth}*{box-sizing:border-box}body{margin:0}a{color:inherit;text-decoration:none}header,main,footer{max-width:1180px;margin:auto}header{height:84px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.logo{font:800 20px Manrope;display:flex;align-items:center;gap:10px}.logo span{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--ink);color:var(--lime)}nav{display:flex;gap:34px;font-size:14px;font-weight:600}.pill{display:inline-flex;justify-content:center;padding:15px 22px;border:0;border-radius:12px;background:var(--lime);font:800 14px inherit;box-shadow:0 8px 24px #9fe22933;transition:.2s}.pill:hover{transform:translateY(-2px)}.pill.mini{padding:11px 16px}.pill.dark{background:var(--ink);color:white;box-shadow:none}
+.hero{position:relative;min-height:670px;padding:110px 24px 80px;border-bottom:1px solid var(--line);overflow:hidden}.copy{position:relative;z-index:2}.eyebrow,.kicker{color:#4b8113;font-size:12px;font-weight:800;letter-spacing:.15em}.eyebrow{display:flex;align-items:center;gap:10px}.eyebrow i{width:7px;height:7px;border-radius:50%;background:#78c21e;box-shadow:0 0 0 5px #e0f7c6}h1,h2,h3{font-family:Manrope,sans-serif}h1{margin:22px 0;font-size:clamp(52px,7vw,86px);letter-spacing:-.065em;line-height:.96}h1 em{color:#75b62a;font-style:normal}.lead{max-width:560px;color:var(--muted);font-size:18px;line-height:1.65}.actions{display:flex;align-items:center;gap:30px;margin-top:32px;font-weight:700}.compat{margin-top:25px;color:#849087;font-size:12px}
+.browser-card{position:absolute;right:25px;top:105px;width:390px;border:1px solid #ccd8ce;border-radius:20px;background:white;box-shadow:0 35px 70px #233a2a22;transform:rotate(2deg);overflow:hidden}.browser-top{height:46px;padding:14px;display:flex;gap:6px;background:#edf2ed}.browser-top>span{width:8px;height:8px;border-radius:50%;background:#bdc8bf}.browser-top div{margin-left:18px;width:220px;padding:5px;background:white;border-radius:6px;text-align:center;color:#9aa;font-size:9px}.preview{padding:42px;text-align:center}.shield{display:grid;place-items:center;margin:auto;width:65px;height:65px;border-radius:20px;background:var(--lime);font-size:30px;font-weight:900}.preview>small{display:block;margin:20px;color:#62a318;font-weight:800;letter-spacing:.15em}.preview>strong{font:800 54px Manrope}.preview>p{margin:0;color:var(--muted)}.meter{height:5px;margin:25px 0;background:#e7eee7}.meter i{display:block;width:84%;height:100%;background:var(--lime)}.privacy{display:flex;gap:12px;padding:15px;background:#f1f7ed;border-radius:12px;text-align:left}.privacy div{display:flex;flex-direction:column;font-size:12px}.privacy small{color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);padding:35px 24px;border-bottom:1px solid var(--line)}.stats div{display:flex;justify-content:center;align-items:baseline;gap:12px;border-right:1px solid var(--line)}.stats div:last-child{border:0}.stats strong{font:800 28px Manrope}.stats span{color:var(--muted);font-size:13px}.section{padding:120px 24px}.section-head{display:flex;justify-content:space-between;align-items:end}.section h2,.open h2,.donate h2{font-size:clamp(38px,5vw,58px);line-height:1.03;letter-spacing:-.05em;margin:14px 0}.section-head>p{max-width:430px;color:var(--muted);line-height:1.7}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:60px}.feature{position:relative;min-height:300px;padding:34px;border:1px solid var(--line);border-radius:18px;background:white}.feature.featured{background:var(--ink);color:white;transform:translateY(-15px)}.feature-icon{display:grid;place-items:center;width:52px;height:52px;border-radius:14px;background:#edffd5;font-size:22px}.feature h3{margin-top:52px}.feature p{color:#849289;line-height:1.6}.feature>b{position:absolute;right:28px;top:26px;color:#aab5ac}
+.open{margin:0 24px 100px;padding:75px;border-radius:28px;background:var(--lime);display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center}.open p{line-height:1.7}.open pre{padding:32px;border-radius:16px;background:#0b1812;color:#d8e5dc;line-height:2;overflow:auto;box-shadow:12px 12px 0 #8bc527}.open code span{color:#71847a}.open code b{color:var(--lime)}.donate{margin:0 24px 100px;padding:50px;border:1px solid var(--line);border-radius:24px;display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:center;background:white}.donate>span{font-size:42px}.donate h2{font-size:30px}.donate p{color:var(--muted)}footer{padding:35px 24px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:13px}.section,.open,.donate,.stats{opacity:0;transform:translateY(20px);transition:.7s}.show{opacity:1;transform:none}
+@media(max-width:850px){nav{display:none}.hero{padding-top:65px;padding-bottom:500px}.browser-card{top:auto;bottom:55px;right:50%;transform:translateX(50%) rotate(1deg);max-width:calc(100% - 40px)}.grid{grid-template-columns:1fr}.feature.featured{transform:none}.section-head,.open{display:grid;grid-template-columns:1fr;gap:25px}.open{padding:42px 28px}.donate{grid-template-columns:auto 1fr}.donate button{grid-column:1/-1}footer{flex-direction:column;gap:12px;text-align:center}}@media(max-width:520px){header .mini{display:none}.actions{align-items:stretch;flex-direction:column}.stats{grid-template-columns:1fr}.stats div{padding:9px;border:0}.section{padding:80px 18px}.open,.donate{margin-left:12px;margin-right:12px}.open pre{font-size:11px;padding:18px}}@media(prefers-reduced-motion:reduce){*{transition:none!important}.section,.open,.donate,.stats{opacity:1;transform:none}}
+</style>
