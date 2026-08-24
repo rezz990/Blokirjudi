@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "BlokirJudi",
+  "version": "0.1.0",
+  "description": "Blokir situs judi online dengan ringan, terbuka, dan tanpa melacak kamu.",
+  "permissions": ["alarms", "declarativeNetRequest", "storage"],
+  "host_permissions": ["<all_urls>"],
+  "background": { "service_worker": "src/background.js", "type": "module" },
+  "action": {
+    "default_title": "BlokirJudi",
+    "default_popup": "popup/index.html",
+    "default_icon": "icons/icon.svg"
+  },
+  "icons": { "16": "icons/icon.svg", "32": "icons/icon.svg", "48": "icons/icon.svg", "128": "icons/icon.svg" },
+  "options_ui": { "page": "options/index.html", "open_in_tab": true },
+  "declarative_net_request": {
+    "rule_resources": [{ "id": "starter_rules", "enabled": true, "path": "rules/starter.json" }]
+  },
+  "web_accessible_resources": [{ "resources": ["blocked/index.html", "assets/*"], "matches": ["<all_urls>"] }]
+}

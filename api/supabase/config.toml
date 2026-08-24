@@ -1,0 +1,4 @@
+project_id = "blokirjudi"
+
+[functions.blacklist]
+verify_jwt = false
