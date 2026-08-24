@@ -19,22 +19,48 @@
 
 Kami memilih DNR karena lebih hemat daripada mencegat semua request lewat JavaScript. API memakai Supabase supaya migrasi, RLS, dan deployment tetap sederhana. Landing memakai Astro tetapi mengirim HTML/CSS biasa; interaksi kecilnya tetap vanilla JavaScript.
 
-## Mulai development
+## Pilih module yang mau dijalankan
 
-Mulai dari [`.env.example`](.env.example) untuk checklist URL deployment. API dan landing punya contoh env masing-masing karena keduanya dijalankan oleh service yang berbeda—jangan taruh service role key di env landing.
+Ketiga module bisa dikembangkan terpisah. Kalau mau mencoba alur penuh, urutan paling enak adalah **API → extension → landing**.
+
+### 1. API blacklist
+
+Butuh Docker dan Supabase CLI. Perintah singkatnya:
 
 ```bash
-# landing
-cd landing && cp .env.example .env && npm install && npm run dev
-
-# API (butuh Supabase CLI + Docker)
-cd api && cp supabase/.env.example supabase/.env.local
-supabase start && supabase db reset
-
-# extension: buka chrome://extensions dan Load unpacked folder extension/
+cd api
+supabase start
+supabase db reset
+cp supabase/.env.example supabase/.env.local
+supabase functions serve blacklist --env-file supabase/.env.local
 ```
 
-Panduan khusus ada di README masing-masing folder. Endpoint produksi dan tautan store/GitHub masih placeholder, jadi wajib disesuaikan sebelum release.
+Nilai URL dan key lokal harus diambil dari `supabase status`, bukan dibiarkan berupa placeholder. Panduan database, data uji, moderasi, deployment, dan troubleshooting ada di **[`api/README.md`](api/README.md)**.
+
+### 2. Browser extension
+
+Module ini tidak membutuhkan npm atau build tool. Jalankan API lebih dulu, lalu buka halaman extension browser dan pilih folder `extension/` lewat **Load unpacked**. Untuk Firefox, gunakan salinan temporary dengan manifest khusus—jangan menimpa manifest Chromium di working tree.
+
+Panduan Chrome/Edge/Brave/Firefox, konfigurasi URL API lokal, skenario test, dan packaging release ada di **[`extension/README.md`](extension/README.md)**.
+
+### 3. Landing page
+
+Butuh Node.js `>=22.12.0`:
+
+```bash
+cd landing
+npm install
+cp .env.example .env
+npm run dev
+```
+
+Panduan semua environment URL, build, preview, static hosting, dan checklist rilis ada di **[`landing/README.md`](landing/README.md)**.
+
+### Environment
+
+[`.env.example`](.env.example) root adalah checklist URL seluruh deployment. Gunakan file env khusus di module masing-masing saat menjalankan aplikasi. Jangan pernah menaruh `SUPABASE_SERVICE_ROLE_KEY` di landing atau extension karena keduanya dapat dibaca pengguna.
+
+Endpoint produksi dan tautan store/GitHub masih placeholder, jadi wajib disesuaikan sebelum release.
 
 > Ikon extension memakai SVG yang bisa diedit langsung dan tidak memerlukan file ZIP atau asset PNG binary. Detailnya ada di [`extension/README.md`](extension/README.md).
 
