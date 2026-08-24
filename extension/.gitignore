@@ -1,0 +1,2 @@
+# Asset PNG disediakan sebagai arsip terpisah agar binary tidak ikut repository.
+icons/*.png
