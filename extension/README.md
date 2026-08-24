@@ -2,15 +2,9 @@
 
 Source extension tanpa build tool. `manifest.json` dipakai Chromium (Chrome, Edge, Brave), sedangkan Firefox memakai `manifest.firefox.json` yang perlu disalin menjadi `manifest.json` ketika packaging.
 
-## Siapkan ikon
+## Ikon
 
-File PNG sengaja tidak disimpan di Git. Unduh arsip `blokirjudi-extension-icons.zip` yang disertakan pada release/artifact, lalu ekstrak dari folder ini:
-
-```bash
-unzip /lokasi/blokirjudi-extension-icons.zip
-```
-
-Setelah diekstrak, pastikan tersedia `icons/icon-16.png`, `icon-32.png`, `icon-48.png`, dan `icon-128.png`. SHA-256 arsip yang dibuat bersama perubahan ini adalah `28485bd1cb3f0e99fb2f57b7b81f89666d6ae72b8e2100ab01937675fdd9c0fc`.
+Ikon utama tersedia sebagai vector di `icons/icon.svg`, jadi tajam di berbagai ukuran dan tetap gampang diedit lewat teks. Nggak ada ZIP atau file PNG binary yang perlu diekstrak dulu.
 
 ## Coba secara lokal
 

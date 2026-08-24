@@ -33,7 +33,7 @@ cd api && supabase start && supabase db reset
 
 Panduan khusus ada di README masing-masing folder. Endpoint produksi dan tautan store/GitHub masih placeholder, jadi wajib disesuaikan sebelum release.
 
-> Ikon PNG extension didistribusikan sebagai arsip terpisah supaya file binary tidak ikut masuk Git. Ikuti langkah ekstraknya di [`extension/README.md`](extension/README.md) sebelum melakukan load atau packaging extension.
+> Ikon extension memakai SVG yang bisa diedit langsung dan tidak memerlukan file ZIP atau asset PNG binary. Detailnya ada di [`extension/README.md`](extension/README.md).
 
 ## Ikut kontribusi
 
