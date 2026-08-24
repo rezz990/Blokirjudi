@@ -2,6 +2,8 @@
 
 Source extension tanpa build tool. `manifest.json` dipakai Chromium (Chrome, Edge, Brave), sedangkan Firefox memakai `manifest.firefox.json` yang perlu disalin menjadi `manifest.json` ketika packaging.
 
+Karena extension sengaja tanpa build tool, file `.env` tidak dibaca oleh browser. URL API bawaan ada di `src/config.js`; pengguna juga bisa menggantinya lewat halaman **Pengaturan** tanpa mengubah source. Untuk deployment, samakan nilai tersebut dengan `API_BLACKLIST_URL` di `.env.example` root.
+
 ## Ikon
 
 Ikon utama tersedia sebagai vector di `icons/icon.svg`, jadi tajam di berbagai ukuran dan tetap gampang diedit lewat teks. Nggak ada ZIP atau file PNG binary yang perlu diekstrak dulu.

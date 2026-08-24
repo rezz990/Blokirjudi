@@ -4,23 +4,26 @@ const features = [
   ["🔒", "Privasi itu default", "Riwayat browsing tetap di perangkatmu. Kami cuma mengirim daftar blokir."],
   ["🌱", "Dibangun bareng", "Kode terbuka dan kontribusi sekecil apa pun selalu punya tempat."],
 ];
+const githubUrl = import.meta.env.PUBLIC_GITHUB_URL ?? "https://github.com/";
+const downloadUrl = import.meta.env.PUBLIC_EXTENSION_DOWNLOAD_URL ?? githubUrl;
+const donationUrl = import.meta.env.PUBLIC_DONATION_URL ?? "";
 ---
 <!doctype html>
 <html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="description" content="Extension gratis, ringan, dan privacy-first untuk membantu memblokir situs judi online."><link rel="icon" href="/favicon.svg"><meta name="theme-color" content="#07110e"><title>BlokirJudi — Internetan lebih tenang</title></head>
 <body>
 <header><a class="logo" href="#atas"><span>B.</span> BlokirJudi</a><nav><a href="#cara">Cara kerja</a><a href="#terbuka">Open source</a><a href="#dukung">Dukung</a></nav><a class="pill mini" href="#unduh">Pasang gratis ↗</a></header>
 <main id="atas">
-<section class="hero"><div class="copy"><div class="eyebrow"><i></i> 100% GRATIS &amp; OPEN SOURCE</div><h1>Jaga langkahmu<br>di <em>internet.</em></h1><p class="lead">Satu extension kecil buat bantu kamu menjauh dari situs judi online. Ringan, nggak menghakimi, dan nggak kepo sama riwayat browsingmu.</p><div class="actions" id="unduh"><a class="pill" href="https://github.com/" rel="noreferrer">Pasang di browser ↗</a><a href="#cara">◉ &nbsp; Lihat cara kerjanya</a></div><p class="compat">Segera hadir untuk <b>Chrome · Firefox · Edge · Brave</b></p></div>
+<section class="hero"><div class="copy"><div class="eyebrow"><i></i> 100% GRATIS &amp; OPEN SOURCE</div><h1>Jaga langkahmu<br>di <em>internet.</em></h1><p class="lead">Satu extension kecil buat bantu kamu menjauh dari situs judi online. Ringan, nggak menghakimi, dan nggak kepo sama riwayat browsingmu.</p><div class="actions" id="unduh"><a class="pill" href={downloadUrl} rel="noreferrer">Pasang di browser ↗</a><a href="#cara">◉ &nbsp; Lihat cara kerjanya</a></div><p class="compat">Segera hadir untuk <b>Chrome · Firefox · Edge · Brave</b></p></div>
 <aside class="browser-card" aria-label="Pratinjau extension"><div class="browser-top"><span></span><span></span><span></span><div>blokirjudi.id</div></div><div class="preview"><div class="shield">✓</div><small>PROTEKSI AKTIF</small><strong>12.482</strong><p>situs dijaga hari ini</p><div class="meter"><i></i></div><div class="privacy">🔒 <div><b>Data kamu tetap milikmu</b><small>Tanpa tracker &amp; riwayat browsing</small></div></div></div></aside></section>
 <section class="stats"><div><strong>20K</strong><span>kapasitas domain</span></div><div><strong>0</strong><span>tracker ditanam</span></div><div><strong>24j</strong><span>update otomatis</span></div></section>
 <section class="section" id="cara"><div class="section-head"><div><span class="kicker">KENAPA BLOKIRJUDI?</span><h2>Tenang tanpa<br>banyak drama.</h2></div><p>Kami percaya teknologi yang baik itu terasa membantu tanpa ikut campur. Makanya semuanya dibuat sesederhana dan seterbuka mungkin.</p></div><div class="grid">{features.map(([icon,title,copy],i) => <article class:list={["feature",i===1&&"featured"]}><span class="feature-icon">{icon}</span><h3>{title}</h3><p>{copy}</p><b>0{i+1}</b></article>)}</div></section>
-<section class="open" id="terbuka"><div><span class="kicker">PUNYA KITA BARENG</span><h2>Transparan sampai baris kode terakhir.</h2><p>Blacklist, extension, API, sampai landing page ini terbuka untuk dilihat dan diperbaiki. Menemukan bug atau punya ide? Yuk, ikut nimbrung.</p><a class="pill dark" href="https://github.com/" rel="noreferrer">Lihat di GitHub ↗</a></div><pre><code><span>// nggak ada yang disembunyikan</span>
+<section class="open" id="terbuka"><div><span class="kicker">PUNYA KITA BARENG</span><h2>Transparan sampai baris kode terakhir.</h2><p>Blacklist, extension, API, sampai landing page ini terbuka untuk dilihat dan diperbaiki. Menemukan bug atau punya ide? Yuk, ikut nimbrung.</p><a class="pill dark" href={githubUrl} rel="noreferrer">Lihat di GitHub ↗</a></div><pre><code><span>// nggak ada yang disembunyikan</span>
 {
   <b>"tracking"</b>: false,
   <b>"selling_data"</b>: false,
   <b>"community_powered"</b>: true
 }</code></pre></section>
-<section class="donate" id="dukung"><span>☕</span><div><span class="kicker">TRAKTIR KOPI</span><h2>Bantu project ini tetap jalan.</h2><p>Kalau BlokirJudi terasa berguna, dukungan lewat QRIS, GoPay, atau Bank Jago bakal berarti banget.</p></div><button class="pill" disabled>Donasi segera dibuka</button></section>
+<section class="donate" id="dukung"><span>☕</span><div><span class="kicker">TRAKTIR KOPI</span><h2>Bantu project ini tetap jalan.</h2><p>Kalau BlokirJudi terasa berguna, dukungan lewat QRIS, GoPay, atau Bank Jago bakal berarti banget.</p></div>{donationUrl ? <a class="pill" href={donationUrl} rel="noreferrer">Dukung sekarang ↗</a> : <button class="pill" disabled>Donasi segera dibuka</button>}</section>
 </main><footer><a class="logo" href="#atas"><span>B.</span> BlokirJudi</a><p>Dibuat dengan niat baik untuk internet yang lebih sehat. 🌱</p><p>© 2026 · Open source</p></footer>
 <script>const o=new IntersectionObserver(xs=>xs.forEach(x=>x.isIntersecting&&x.target.classList.add('show')),{threshold:.1});document.querySelectorAll('.section,.open,.donate,.stats').forEach(x=>o.observe(x));</script>
 </body></html>

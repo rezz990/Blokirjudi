@@ -1,10 +1,15 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+const allowedOrigin = Deno.env.get("BLACKLIST_ALLOWED_ORIGIN") ?? "*";
+const cacheControl = Deno.env.get("BLACKLIST_CACHE_CONTROL") ?? "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400";
+const configuredLimit = Number.parseInt(Deno.env.get("BLACKLIST_MAX_DOMAINS") ?? "20000", 10);
+const domainLimit = Number.isFinite(configuredLimit) ? Math.min(Math.max(configuredLimit, 1), 20_000) : 20_000;
+
 const cors = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": allowedOrigin,
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "GET, OPTIONS",
-  "Cache-Control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400",
+  "Cache-Control": cacheControl,
   "Content-Type": "application/json; charset=utf-8",
 };
 
@@ -22,7 +27,7 @@ Deno.serve(async (request) => {
     .select("domain")
     .eq("status", "verified")
     .order("domain")
-    .limit(20_000);
+    .limit(domainLimit);
 
   if (error) return Response.json({ error: "Blacklist belum bisa dimuat" }, { status: 500, headers: cors });
   const domains = data.map(({ domain }) => domain);

@@ -21,12 +21,15 @@ Kami memilih DNR karena lebih hemat daripada mencegat semua request lewat JavaSc
 
 ## Mulai development
 
+Mulai dari [`.env.example`](.env.example) untuk checklist URL deployment. API dan landing punya contoh env masing-masing karena keduanya dijalankan oleh service yang berbeda—jangan taruh service role key di env landing.
+
 ```bash
 # landing
-cd landing && npm install && npm run dev
+cd landing && cp .env.example .env && npm install && npm run dev
 
 # API (butuh Supabase CLI + Docker)
-cd api && supabase start && supabase db reset
+cd api && cp supabase/.env.example supabase/.env.local
+supabase start && supabase db reset
 
 # extension: buka chrome://extensions dan Load unpacked folder extension/
 ```
