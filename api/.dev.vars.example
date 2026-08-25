@@ -1,0 +1,2 @@
+# Hanya untuk `wrangler dev`. Salin menjadi `.dev.vars` dan jangan commit nilainya.
+ADMIN_API_TOKEN=ganti-dengan-token-random-yang-panjang
