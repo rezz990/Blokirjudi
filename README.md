@@ -25,14 +25,15 @@ Ketiga module bisa dikembangkan terpisah. Kalau mau mencoba alur penuh, urutan p
 
 ### 1. API blacklist
 
-API sekarang ditujukan untuk **Vercel Functions + Supabase cloud**, jadi tidak membutuhkan Docker. Alur paling singkatnya:
+API memakai **Cloudflare Workers + Cloudflare KV**: serverless, global, dan tidak membutuhkan Docker maupun database SQL. Alur singkatnya:
 
-1. Jalankan migration lewat Supabase SQL Editor.
-2. Import repository ke Vercel dengan Root Directory `api`.
-3. Isi `SUPABASE_URL` dan `SUPABASE_SERVICE_ROLE_KEY`.
-4. Deploy, lalu gunakan endpoint `/v1/blacklist`.
+1. Jalankan `npm install` dari folder `api`.
+2. Login Wrangler dan buat namespace KV.
+3. Salin ID namespace ke `api/wrangler.toml`.
+4. Simpan `ADMIN_API_TOKEN` lewat `wrangler secret put`.
+5. Jalankan `npm test`, lalu `npm run deploy`.
 
-Panduan klik-per-klik, local development tanpa Docker, custom domain, moderasi data, dan troubleshooting ada di **[`api/README.md`](api/README.md)**.
+Panduan setup dari nol, update blacklist, fallback, custom domain, keamanan, monitoring, dan troubleshooting ada di **[`api/README.md`](api/README.md)**.
 
 ### 2. Browser extension
 

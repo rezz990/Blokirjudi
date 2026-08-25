@@ -1,0 +1,18 @@
+name = "blokirjudi-api"
+main = "src/index.js"
+compatibility_date = "2026-08-24"
+workers_dev = true
+
+[vars]
+ALLOWED_ORIGIN = "*"
+CACHE_CONTROL = "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400"
+MAX_DOMAINS = "20000"
+
+[[kv_namespaces]]
+binding = "BLACKLIST_KV"
+id = "GANTI_DENGAN_KV_NAMESPACE_ID"
+preview_id = "GANTI_DENGAN_PREVIEW_KV_NAMESPACE_ID"
+
+[observability]
+enabled = true
+head_sampling_rate = 1
